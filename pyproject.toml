@@ -1,0 +1,54 @@
+[project]
+name = "vnpy-ai-hedge-fund-integration"
+version = "0.1.0"
+description = "VeighNa AI Hedge Fund integration package."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.4",
+    "pandas>=2.1",
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+agent = [
+    "langchain>=0.3.7",
+    "langchain-core>=0.3.0",
+    "langgraph>=0.2.56",
+    "langchain-ollama>=0.3.6",
+]
+web = [
+    "fastapi>=0.104",
+    "sqlalchemy>=2.0",
+    "uvicorn>=0.23",
+]
+dev = [
+    "pytest>=7.4",
+    "ruff>=0.6",
+    "mypy>=1.8",
+]
+
+[build-system]
+requires = ["setuptools>=64.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["vnpy_ai*", "vnpy_ai_web*"]
+
+[tool.pytest.ini_options]
+pythonpath = [".", "vnpy"]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+output-format = "full"
+extend-exclude = ["vnpy_ai/agents/upstream"]
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "UP", "W"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+ignore_missing_imports = true

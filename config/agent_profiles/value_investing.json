@@ -1,0 +1,6 @@
+{
+  "name": "value_investing",
+  "analysts": ["ben_graham", "warren_buffett", "charlie_munger", "aswath_damodaran"],
+  "fallback_strategy": "hold"
+}
+

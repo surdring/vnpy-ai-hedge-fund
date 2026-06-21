@@ -1,0 +1,15 @@
+[
+  {
+    "provider": "Ollama",
+    "default_model": "llama3",
+    "local": true,
+    "enabled_by_default": true
+  },
+  {
+    "provider": "OpenAI",
+    "env_key": "OPENAI_API_KEY",
+    "local": false,
+    "enabled_by_default": false
+  }
+]
+

@@ -1,0 +1,6 @@
+{
+  "name": "growth_investing",
+  "analysts": ["cathie_wood", "growth_analyst", "phil_fisher", "peter_lynch"],
+  "fallback_strategy": "hold"
+}
+

@@ -1,0 +1,6 @@
+{
+  "name": "macro_trading",
+  "analysts": ["stanley_druckenmiller", "nassim_taleb", "technical_analyst", "sentiment_analyst"],
+  "fallback_strategy": "hold"
+}
+

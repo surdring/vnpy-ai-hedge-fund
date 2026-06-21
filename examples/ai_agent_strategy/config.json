@@ -1,0 +1,9 @@
+{
+  "enabled": false,
+  "enable_auto_trading": false,
+  "trigger_frequency": "daily",
+  "selected_analysts": ["technical_analyst", "valuation_analyst"],
+  "llm_provider": "Ollama",
+  "llm_model_name": "llama3"
+}
+

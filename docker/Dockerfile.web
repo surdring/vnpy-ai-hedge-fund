@@ -1,0 +1,10 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY pyproject.toml .
+RUN pip install --no-cache-dir -e ".[web]"
+COPY vnpy_ai/ vnpy_ai/
+COPY vnpy_ai_web/ vnpy_ai_web/
+COPY vnpy/ vnpy/
+COPY config/ config/
+EXPOSE 8000
+CMD ["uvicorn", "vnpy_ai_web.backend.main:app", "--host", "0.0.0.0", "--port", "8000"]

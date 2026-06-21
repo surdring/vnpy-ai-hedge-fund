@@ -1,0 +1,17 @@
+{
+  "enabled": false,
+  "enable_auto_trading": false,
+  "trigger_frequency": "daily",
+  "selected_analysts": [],
+  "llm_model_name": "llama3",
+  "llm_provider": "Ollama",
+  "max_position_ratio": 0.2,
+  "signal_cooldown": 300,
+  "fallback_strategy": "hold",
+  "rpc_host": "127.0.0.1",
+  "rpc_server_port": 9001,
+  "rpc_agent_port": 9002,
+  "gateway_name": "",
+  "order_type": "LIMIT"
+}
+

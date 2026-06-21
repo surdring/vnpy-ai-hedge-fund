@@ -1,0 +1,8 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY pyproject.toml .
+RUN pip install --no-cache-dir -e ".[agent]"
+COPY vnpy_ai/ vnpy_ai/
+COPY vnpy/ vnpy/
+COPY config/ config/
+CMD ["python", "examples/multi_agent_backtest/run.py"]
