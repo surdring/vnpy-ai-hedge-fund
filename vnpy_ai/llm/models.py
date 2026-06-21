@@ -131,6 +131,18 @@ def create_model(
                 return None
             return ChatOllama(model=model_name, **kwargs)
 
+        elif provider == "llamacpp":
+            # llama.cpp server exposes an OpenAI-compatible endpoint.
+            try:
+                from langchain_openai import ChatOpenAI
+            except ImportError:
+                logger.warning(
+                    "langchain_openai not installed; llama.cpp unavailable"
+                )
+                return None
+            kwargs.setdefault("base_url", "http://localhost:8080/v1")
+            return ChatOpenAI(model=model_name, **kwargs)
+
         elif provider == "mistral":
             try:
                 from langchain_mistralai import ChatMistralAI
@@ -189,7 +201,7 @@ def get_available_providers() -> list[str]:
     # (Kimi/OpenRouter use ChatOpenAI with a custom base_url).
     try:
         import langchain_openai  # noqa: F401
-        available.extend(["openai", "azure", "openrouter", "kimi"])
+        available.extend(["openai", "azure", "openrouter", "kimi", "llamacpp"])
     except ImportError:
         pass
     try:

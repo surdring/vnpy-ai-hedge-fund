@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { apiKeysService } from '@/services/api-keys-api';
-import { Eye, EyeOff, Key, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, Key, Server, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface ApiKey {
@@ -82,11 +82,75 @@ const LLM_API_KEYS: ApiKey[] = [
   }
 ];
 
+const LLM_BASE_URLS: { key: string; label: string; defaultBaseUrl: string; placeholder: string }[] = [
+  {
+    key: 'OPENAI_BASE_URL',
+    label: 'OpenAI Base URL',
+    defaultBaseUrl: 'https://api.openai.com/v1',
+    placeholder: 'https://api.openai.com/v1'
+  },
+  {
+    key: 'ANTHROPIC_BASE_URL',
+    label: 'Anthropic Base URL',
+    defaultBaseUrl: 'https://api.anthropic.com',
+    placeholder: 'https://api.anthropic.com'
+  },
+  {
+    key: 'DEEPSEEK_BASE_URL',
+    label: 'DeepSeek Base URL',
+    defaultBaseUrl: 'https://api.deepseek.com',
+    placeholder: 'https://api.deepseek.com'
+  },
+  {
+    key: 'GOOGLE_BASE_URL',
+    label: 'Google Base URL',
+    defaultBaseUrl: '',
+    placeholder: 'https://generativelanguage.googleapis.com'
+  },
+  {
+    key: 'GROQ_BASE_URL',
+    label: 'Groq Base URL',
+    defaultBaseUrl: 'https://api.groq.com',
+    placeholder: 'https://api.groq.com'
+  },
+  {
+    key: 'MOONSHOT_BASE_URL',
+    label: 'Moonshot (Kimi) Base URL',
+    defaultBaseUrl: 'https://api.moonshot.ai/v1',
+    placeholder: 'https://api.moonshot.cn/v1'
+  },
+  {
+    key: 'OPENROUTER_BASE_URL',
+    label: 'OpenRouter Base URL',
+    defaultBaseUrl: 'https://openrouter.ai/api/v1',
+    placeholder: 'https://openrouter.ai/api/v1'
+  },
+  {
+    key: 'OLLAMA_BASE_URL',
+    label: 'Ollama Base URL',
+    defaultBaseUrl: 'http://localhost:11434',
+    placeholder: 'http://localhost:11434'
+  },
+  {
+    key: 'LLAMA_CPP_BASE_URL',
+    label: 'llama.cpp Base URL',
+    defaultBaseUrl: 'http://localhost:8080/v1',
+    placeholder: 'http://localhost:8080/v1'
+  },
+  {
+    key: 'GIGACHAT_BASE_URL',
+    label: 'GigaChat Base URL',
+    defaultBaseUrl: '',
+    placeholder: 'https://gigachat.devices.sberbank.ru/api/v1'
+  },
+];
+
 export function ApiKeysSettings() {
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
   const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [baseUrls, setBaseUrls] = useState<Record<string, string>>({});
 
   // Load API keys from backend on component mount
   useEffect(() => {
@@ -101,16 +165,22 @@ export function ApiKeysSettings() {
       
       // Load actual key values for existing keys
       const keysData: Record<string, string> = {};
+      const baseUrlsData: Record<string, string> = {};
       for (const summary of apiKeysSummary) {
         try {
           const fullKey = await apiKeysService.getApiKey(summary.provider);
-          keysData[summary.provider] = fullKey.key_value;
+          if (summary.provider.endsWith('_BASE_URL')) {
+            baseUrlsData[summary.provider] = fullKey.key_value;
+          } else {
+            keysData[summary.provider] = fullKey.key_value;
+          }
         } catch (err) {
           console.warn(`Failed to load key for ${summary.provider}:`, err);
         }
       }
       
       setApiKeys(keysData);
+      setBaseUrls(baseUrlsData);
     } catch (err) {
       console.error('Failed to load API keys:', err);
       setError('Failed to load API keys. Please try again.');
@@ -145,6 +215,31 @@ export function ApiKeysSettings() {
       }
     } catch (err) {
       console.error(`Failed to save API key ${key}:`, err);
+      setError(`Failed to save ${key}. Please try again.`);
+    }
+  };
+
+  const handleBaseUrlChange = async (key: string, value: string) => {
+    setBaseUrls(prev => ({
+      ...prev,
+      [key]: value
+    }));
+    try {
+      if (value.trim()) {
+        await apiKeysService.createOrUpdateApiKey({
+          provider: key,
+          key_value: value.trim(),
+          is_active: true
+        });
+      } else {
+        try {
+          await apiKeysService.deleteApiKey(key);
+        } catch (err) {
+          console.log(`Key ${key} not found for deletion, which is expected`);
+        }
+      }
+    } catch (err) {
+      console.error(`Failed to save base URL ${key}:`, err);
       setError(`Failed to save ${key}. Please try again.`);
     }
   };
@@ -227,6 +322,35 @@ export function ApiKeysSettings() {
     </Card>
   );
 
+  const renderBaseUrlSection = (title: string, description: string, urls: typeof LLM_BASE_URLS) => (
+    <Card className="bg-panel border-gray-700 dark:border-gray-700">
+      <CardHeader>
+        <CardTitle className="text-lg font-medium text-primary flex items-center gap-2">
+          <Server className="h-4 w-4" />
+          {title}
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {urls.map((urlConfig) => (
+          <div key={urlConfig.key} className="space-y-2">
+            <label className="text-sm font-medium text-primary">
+              {urlConfig.label}
+            </label>
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder={urlConfig.placeholder}
+                value={baseUrls[urlConfig.key] || ''}
+                onChange={(e) => handleBaseUrlChange(urlConfig.key, e.target.value)}
+              />
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -297,6 +421,13 @@ export function ApiKeysSettings() {
         'API keys for accessing various large language model providers.',
         LLM_API_KEYS,
         <Key className="h-4 w-4" />
+      )}
+
+      {/* Base URLs */}
+      {renderBaseUrlSection(
+        'Base URLs',
+        'Custom API endpoint URLs for LLM providers. Leave empty to use defaults.',
+        LLM_BASE_URLS
       )}
 
       {/* Security Note */}

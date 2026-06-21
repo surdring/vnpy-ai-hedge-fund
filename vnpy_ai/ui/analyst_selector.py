@@ -10,6 +10,24 @@ from PySide6.QtWidgets import (
     QPushButton, QLabel,
 )
 
+# Text-style button for select-all / select-none
+_TEXT_BTN_STYLE = """
+    QPushButton {
+        background: transparent;
+        border: none;
+        color: #60a5fa;
+        padding: 2px 8px;
+        text-decoration: underline;
+        font-size: 12px;
+    }
+    QPushButton:hover {
+        color: #93c5fd;
+    }
+    QPushButton:pressed {
+        color: #3b82f6;
+    }
+"""
+
 
 def _load_analysts() -> list[tuple[str, str]]:
     """Load (display_name, key) pairs from catalog or runner.
@@ -65,23 +83,37 @@ class AnalystSelector(QWidget):
     def _init_ui(self) -> None:
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(4)
 
-        top_layout = QHBoxLayout()
-        top_layout.addWidget(QLabel("分析师选择"))
-        top_layout.addStretch()
+        # Top bar: count label + action links (no redundant title)
+        top_bar = QHBoxLayout()
+        top_bar.setContentsMargins(0, 0, 0, 0)
+
+        self.count_label = QLabel("已选 0 / 19")
+        self.count_label.setStyleSheet("color: #9ca3af; font-size: 11px;")
+        top_bar.addWidget(self.count_label)
+
+        top_bar.addStretch()
 
         self.select_all_btn = QPushButton("全选")
+        self.select_all_btn.setStyleSheet(_TEXT_BTN_STYLE)
         self.select_all_btn.clicked.connect(self._select_all)
-        top_layout.addWidget(self.select_all_btn)
+        top_bar.addWidget(self.select_all_btn)
+
+        sep = QLabel("|")
+        sep.setStyleSheet("color: #4b5563;")
+        top_bar.addWidget(sep)
 
         self.select_none_btn = QPushButton("全不选")
+        self.select_none_btn.setStyleSheet(_TEXT_BTN_STYLE)
         self.select_none_btn.clicked.connect(self._select_none)
-        top_layout.addWidget(self.select_none_btn)
+        top_bar.addWidget(self.select_none_btn)
 
-        layout.addLayout(top_layout)
+        layout.addLayout(top_bar)
 
         self.list_widget = QListWidget()
         self.list_widget.setAlternatingRowColors(True)
+        self.list_widget.itemChanged.connect(self._update_count)
         for display_name, key in self._analysts:
             item = QListWidgetItem(display_name)
             item.setData(Qt.ItemDataRole.UserRole, key)
@@ -90,6 +122,14 @@ class AnalystSelector(QWidget):
             self.list_widget.addItem(item)
 
         layout.addWidget(self.list_widget)
+
+    def _update_count(self) -> None:
+        total = self.list_widget.count()
+        checked = sum(
+            1 for i in range(total)
+            if self.list_widget.item(i).checkState() == Qt.CheckState.Checked
+        )
+        self.count_label.setText(f"已选 {checked} / {total}")
 
     def _select_all(self) -> None:
         """Check every analyst item."""
@@ -120,6 +160,7 @@ class AnalystSelector(QWidget):
             key = item.data(Qt.ItemDataRole.UserRole)
             state = Qt.CheckState.Checked if key in wanted else Qt.CheckState.Unchecked
             item.setCheckState(state)
+        self._update_count()
 
     def get_config(self) -> dict[str, Any]:
         """Return selected analysts as a config dict."""

@@ -24,6 +24,7 @@ class AiSettings(BaseModel):
     selected_analysts: list[str] = Field(default_factory=list)
     llm_model_name: str = "llama3"
     llm_provider: str = "Ollama"
+    llm_base_url: str = ""
     max_position_ratio: float = 0.2
     signal_cooldown: int = 60
     fallback_strategy: str = "hold"

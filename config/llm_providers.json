@@ -10,6 +10,13 @@
     "env_key": "OPENAI_API_KEY",
     "local": false,
     "enabled_by_default": false
+  },
+  {
+    "provider": "llama.cpp",
+    "default_model": "llama3",
+    "local": true,
+    "enabled_by_default": true,
+    "default_base_url": "http://localhost:8080/v1"
   }
 ]
 

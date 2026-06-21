@@ -7,6 +7,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from vnpy.trader.app import BaseApp
+from vnpy.trader.utility import get_icon_path
 
 from .engine import AiHedgeFundEngine
 
@@ -20,5 +21,5 @@ class AiHedgeFundApp(BaseApp):
     display_name = "AI Hedge Fund"
     engine_class = AiHedgeFundEngine
     widget_name = "AiHedgeFundWidget"
-    icon_name = "ai_hedge_fund.ico"
+    icon_name: str = str(get_icon_path(__file__, "ai_hedge_fund.ico"))
 

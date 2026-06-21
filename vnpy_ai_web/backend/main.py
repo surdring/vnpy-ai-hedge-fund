@@ -14,6 +14,7 @@ from vnpy_ai_web.backend.routes.flows import router as flows_router
 from vnpy_ai_web.backend.routes.flow_runs import router as flow_runs_router
 from vnpy_ai_web.backend.routes.hedge_fund import router as hedge_fund_router
 from vnpy_ai_web.backend.routes.language_models import router as language_models_router
+from vnpy_ai_web.backend.routes.llamacpp import router as llamacpp_router
 from vnpy_ai_web.backend.routes.ollama import router as ollama_router
 from vnpy_ai_web.backend.routes.storage import router as storage_router
 
@@ -40,6 +41,7 @@ def create_app() -> FastAPI:
     app.include_router(flow_runs_router)
     app.include_router(hedge_fund_router)
     app.include_router(language_models_router)
+    app.include_router(llamacpp_router)
     app.include_router(ollama_router)
     app.include_router(storage_router)
 

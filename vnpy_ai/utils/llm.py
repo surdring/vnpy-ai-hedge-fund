@@ -54,11 +54,13 @@ def call_llm(
 
     model_name, model_provider = get_agent_model_config(state, agent_name)
     api_keys = _extract_api_keys(state)
+    base_url = _extract_base_url(state)
 
     llm = create_model(
         provider=model_provider,
         model_name=model_name,
         **(api_keys or {}),
+        **({"base_url": base_url} if base_url else {}),
     )
 
     if llm is None:
@@ -212,6 +214,15 @@ def _extract_api_keys(state: dict[str, Any] | None) -> dict[str, str]:
         else:
             result.setdefault("api_key", value)
     return result
+
+
+def _extract_base_url(state: dict[str, Any] | None) -> str:
+    """Extract base_url from state metadata."""
+    if not state:
+        return ""
+    metadata = state.get("metadata", {})
+    base_url = metadata.get("llm_base_url") or metadata.get("base_url") or ""
+    return str(base_url).strip()
 
 
 # Re-export for backwards compatibility with upstream imports.
