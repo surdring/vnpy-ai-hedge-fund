@@ -1,0 +1,23 @@
+# Checklist
+
+- [x] send_decision() 返回单个 vt_orderid 字符串，而非 `str(list)`
+- [x] on_market_event() 支持 daily 频率触发
+- [x] on_market_event() 对 tick/bar 频率有 signal_cooldown 节流
+- [x] EventAdapter 从 vnpy.trader.event 导入常量，本地无重复定义
+- [x] DEFAULT_CONFIG_PATH 基于 `__file__` 计算绝对路径
+- [x] 降级决策 confidence 为 0
+- [x] AgentBase 类存在，提供 get_prices/get_financial_metrics/get_company_news/get_portfolio
+- [x] LLM 模型工厂 create_model() 存在，懒加载 langchain
+- [x] 内存缓存 Cache 类存在，支持 TTL 配置
+- [x] OrderDispatcher 节点存在，将决策转换为订单
+- [x] StatusSync 节点存在，通过 RPC 推送状态
+- [x] FallbackHandler 节点存在，降级返回 hold
+- [x] LangGraph StateGraph 工作流图存在，含完整拓扑
+- [x] WorkflowRunner 整合 graph 调用
+- [x] test_event_adapter.py 通过
+- [x] test_engine_workflow.py 通过
+- [x] test_agent_base.py 通过
+- [x] test_order_flow.py 通过
+- [x] pytest tests/ -v 全部通过（28 passed）
+- [x] ruff check vnpy_ai/ 无问题（All checks passed!）
+- [x] python -c "from vnpy_ai.engine import AiHedgeFundEngine" 正常导入

@@ -280,3 +280,12 @@ pytest tests/ -v -k vnpy_ai
 本项目采用 MIT 许可证。详情参见 [LICENSE](LICENSE)。
 
 `ai-hedge-fund/` 和 `vnpy_ai/agents/upstream/` 中的原始代码遵循其各自的开源许可证。
+
+## 提交github步骤概述
+
+1. **初始化 Git 仓库** — `git init`
+2. **添加远程仓库** — `git remote add origin https://github.com/surdring/vnpy-ai-hedge-fund.git`
+3. **创建 `.gitignore`** — 排除 `__pycache__/`、`.env` 等文件
+4. **暂存所有项目文件** — `git add`（492 个文件）
+5. **提交** — `git commit`，包含项目结构说明
+6. **推送到 GitHub** — `git push -u origin master`（20.85 MiB）
